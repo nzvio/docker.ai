@@ -37,24 +37,10 @@ RUN wget https://github.com/watchexec/watchexec/releases/download/v2.5.0/watchex
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.12 1 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
 
-# Прописываем пути к виртуальному окружению, которое БУДЕТ в папке проекта (см. ниже настройку poetry).
-# Т.е. системный питон будет искать инклюды в подпапке .venv папки проекта.
-# В принципе, если запускать скрипты через poetry run ..., то можно это не указывать.
-# А если указано, то можно запускать и без poetry, просто python somescript.py.
-# Ну и кроме того, если заданы эти настройки, то если указать системный питон в качестве компилятора в IDE, то по идее проще будут либы подключаться.
-ENV VIRTUAL_ENV=/worker/.venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-ENV PYTHONPATH="/worker:$VIRTUAL_ENV/lib/python3.12/site-packages"
-
 # Poetry
 ENV POETRY_HOME="/opt/poetry"
 ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN curl -sSL https://install.python-poetry.org | python3 -
-# ВАЖНО!!!
-# Заставляем писать зависимости в папку проекта, а не куда-то в системную папку .cache/poetry/[code]/.virtualenv/... и т.п.
-# Это позволит примаунтить к этой папке внешнюю, и тогда зависимости после установки будут сохраняться.
-RUN /opt/poetry/bin/poetry config virtualenvs.create true && \
-    /opt/poetry/bin/poetry config virtualenvs.in-project true
 # Разрешаем установку в систему, если вдруг приспичит через pip
 ENV PIP_BREAK_SYSTEM_PACKAGES=1  
 
