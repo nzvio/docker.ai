@@ -1,0 +1,5 @@
+Сборка нового образа из Dockerfile:
+docker build -t nzvio/python:3.12.cuda.audio --push .
+
+Логин в командную строку образа (с подключенной видеокартой):
+docker run -it --gpus all nzvio/python:3.12.cuda.audio bash
